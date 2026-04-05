@@ -38,7 +38,7 @@
     "zod": "^3.23.8"
   },
   "prisma": {
-    "seed": "ts-node --project tsconfig.json prisma/seed.ts"
+    "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"
   },
   "devDependencies": {
     "@netlify/plugin-nextjs": "^5.3.3",
