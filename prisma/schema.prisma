@@ -68,10 +68,13 @@ model Client {
   invitedAt       DateTime?
   completedAt     DateTime?
   formId          String?
+  salesflowDealId String?
   responses       OnboardingResponse[]
   assets          Asset[]
   aiAnalysis      AIAnalysis?
   notes           Note[]
+  tasks           Task[]
+  emailLogs       EmailLog[]
   createdAt       DateTime             @default(now())
   updatedAt       DateTime             @updatedAt
 
@@ -170,6 +173,46 @@ model Note {
   authorId  String
   author    User     @relation(fields: [authorId], references: [id])
   createdAt DateTime @default(now())
+
+  @@index([clientId])
+}
+
+// ─────────────────────────────────────────────
+// TASKS
+// ─────────────────────────────────────────────
+// assignedTo: CLIENT | AGENCY
+// status: TODO | IN_PROGRESS | DONE
+
+model Task {
+  id          String    @id @default(cuid())
+  clientId    String
+  client      Client    @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  title       String
+  description String?
+  assignedTo  String    @default("AGENCY")
+  status      String    @default("TODO")
+  dueDate     DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([clientId])
+  @@index([assignedTo])
+  @@index([status])
+}
+
+// ─────────────────────────────────────────────
+// EMAIL LOG
+// ─────────────────────────────────────────────
+// type: ONBOARDING_INVITE | REMINDER | WELCOME | TASK_REMINDER
+
+model EmailLog {
+  id        String   @id @default(cuid())
+  clientId  String
+  client    Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  type      String
+  subject   String
+  status    String   @default("SENT")
+  sentAt    DateTime @default(now())
 
   @@index([clientId])
 }
