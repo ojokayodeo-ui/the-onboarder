@@ -7,7 +7,9 @@ cmds = ["npm ci --legacy-peer-deps"]
 [phases.build]
 cmds = [
   "npx prisma generate",
-  "npx next build"
+  "npx next build",
+  "cp -r .next/static .next/standalone/.next/static",
+  "cp -r public .next/standalone/public"
 ]
 
 [start]
