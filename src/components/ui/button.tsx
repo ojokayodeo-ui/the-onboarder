@@ -9,14 +9,14 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant = "primary", size = "md", loading, disabled, children, ...props }, ref) => {
-    const base = "inline-flex items-center justify-center gap-2 font-medium rounded-lg transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed";
+    const base = "inline-flex items-center justify-center gap-2 font-medium rounded-lg transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-slate-900 disabled:opacity-50 disabled:cursor-not-allowed";
 
     const variants = {
       primary: "bg-brand-600 text-white hover:bg-brand-700 focus:ring-brand-500 shadow-sm",
-      secondary: "bg-brand-50 text-brand-700 hover:bg-brand-100 focus:ring-brand-400",
-      ghost: "text-slate-600 hover:bg-slate-100 hover:text-slate-900 focus:ring-slate-400",
+      secondary: "bg-brand-50 text-brand-700 hover:bg-brand-100 focus:ring-brand-400 dark:bg-brand-900/40 dark:text-brand-300 dark:hover:bg-brand-900/60",
+      ghost: "text-slate-600 hover:bg-slate-100 hover:text-slate-900 focus:ring-slate-400 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-100",
       danger: "bg-red-600 text-white hover:bg-red-700 focus:ring-red-500",
-      outline: "border border-slate-200 text-slate-700 hover:bg-slate-50 focus:ring-slate-400 bg-white",
+      outline: "border border-slate-200 text-slate-700 hover:bg-slate-50 focus:ring-slate-400 bg-white dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800 dark:bg-transparent",
     };
 
     const sizes = {

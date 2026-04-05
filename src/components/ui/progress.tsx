@@ -27,13 +27,17 @@ export function Progress({ value, max = 100, className, showLabel, color = "bran
 
   return (
     <div className={cn("flex items-center gap-3", className)}>
-      <div className={cn("flex-1 bg-slate-100 rounded-full overflow-hidden", heights[size])}>
+      <div className={cn("flex-1 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden", heights[size])}>
         <div
           className={cn("h-full rounded-full transition-all duration-500", colors[color])}
           style={{ width: `${percentage}%` }}
         />
       </div>
-      {showLabel && <span className="text-sm font-medium text-slate-600 w-10 text-right">{Math.round(percentage)}%</span>}
+      {showLabel && (
+        <span className="text-sm font-medium text-slate-600 dark:text-slate-400 w-10 text-right">
+          {Math.round(percentage)}%
+        </span>
+      )}
     </div>
   );
 }

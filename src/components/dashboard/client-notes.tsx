@@ -45,15 +45,15 @@ export function ClientNotes({ clientId, initialNotes }: { clientId: string; init
     <Card>
       <CardHeader>
         <div className="flex items-center gap-2">
-          <MessageSquare size={15} className="text-slate-500" />
-          <h3 className="font-semibold text-slate-900 text-sm">Notes</h3>
-          {notes.length > 0 && <span className="ml-auto text-xs text-slate-400">{notes.length}</span>}
+          <MessageSquare size={15} className="text-slate-500 dark:text-slate-400" />
+          <h3 className="font-semibold text-slate-900 dark:text-white text-sm">Notes</h3>
+          {notes.length > 0 && <span className="ml-auto text-xs text-slate-400 dark:text-slate-500">{notes.length}</span>}
         </div>
       </CardHeader>
       <CardBody className="p-4 space-y-4">
         <form onSubmit={addNote} className="flex gap-2">
           <input
-            className="flex-1 text-sm border border-slate-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brand-500 placeholder:text-slate-400"
+            className="flex-1 text-sm border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brand-500 bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500"
             placeholder="Add a note..."
             value={content}
             onChange={(e) => setContent(e.target.value)}
@@ -64,18 +64,18 @@ export function ClientNotes({ clientId, initialNotes }: { clientId: string; init
         </form>
 
         {notes.length === 0 ? (
-          <p className="text-xs text-slate-400 text-center py-4">No notes yet</p>
+          <p className="text-xs text-slate-400 dark:text-slate-500 text-center py-4">No notes yet</p>
         ) : (
           <div className="space-y-3 max-h-60 overflow-y-auto">
             {notes.map((note) => (
               <div key={note.id} className="flex items-start gap-2.5">
                 <Avatar name={note.author.name ?? note.author.email} size="sm" />
-                <div className="flex-1 bg-slate-50 rounded-lg px-3 py-2">
+                <div className="flex-1 bg-slate-50 dark:bg-slate-800 rounded-lg px-3 py-2">
                   <div className="flex items-center justify-between mb-1">
-                    <span className="text-xs font-medium text-slate-700">{note.author.name ?? note.author.email}</span>
-                    <span className="text-xs text-slate-400">{formatDateRelative(note.createdAt)}</span>
+                    <span className="text-xs font-medium text-slate-700 dark:text-slate-300">{note.author.name ?? note.author.email}</span>
+                    <span className="text-xs text-slate-400 dark:text-slate-500">{formatDateRelative(note.createdAt)}</span>
                   </div>
-                  <p className="text-xs text-slate-600 whitespace-pre-wrap">{note.content}</p>
+                  <p className="text-xs text-slate-600 dark:text-slate-400 whitespace-pre-wrap">{note.content}</p>
                 </div>
               </div>
             ))}

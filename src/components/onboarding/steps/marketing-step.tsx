@@ -42,26 +42,17 @@ export function MarketingStep({ initial, onNext, onSave, saving }: Props) {
     setForm((prev) => ({ ...prev, [field]: value }));
   }
 
-  function handleNext() {
-    onNext({ ...form, channels });
-  }
-
-  function handleSave() {
-    onSave({ ...form, channels });
-  }
-
   return (
     <StepWrapper
       title="Your marketing & sales"
       description="Tell us how you currently get customers. Honesty here leads to better strategy."
       emoji="📣"
-      onNext={handleNext}
-      onSave={handleSave}
+      onNext={() => onNext({ ...form, channels })}
+      onSave={() => onSave({ ...form, channels })}
       saving={saving}
     >
-      {/* Channel selection */}
       <div>
-        <label className="text-sm font-medium text-slate-700 block mb-3">Current Marketing Channels</label>
+        <label className="text-sm font-medium text-slate-700 dark:text-slate-300 block mb-3">Current Marketing Channels</label>
         <div className="flex flex-wrap gap-2">
           {CHANNELS.map((ch) => (
             <button
@@ -71,7 +62,7 @@ export function MarketingStep({ initial, onNext, onSave, saving }: Props) {
               className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all border ${
                 channels.includes(ch)
                   ? "bg-brand-600 text-white border-brand-600 shadow-sm"
-                  : "bg-white text-slate-600 border-slate-200 hover:border-brand-300 hover:text-brand-600"
+                  : "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-700 hover:border-brand-300 dark:hover:border-brand-600 hover:text-brand-600 dark:hover:text-brand-400"
               }`}
             >
               {ch}
@@ -79,31 +70,13 @@ export function MarketingStep({ initial, onNext, onSave, saving }: Props) {
           ))}
         </div>
         {channels.length > 0 && (
-          <p className="text-xs text-slate-500 mt-2">{channels.length} channel{channels.length > 1 ? "s" : ""} selected</p>
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-2">{channels.length} channel{channels.length > 1 ? "s" : ""} selected</p>
         )}
       </div>
 
-      <Textarea
-        label="Current Messaging & Angles Used"
-        placeholder="What headlines, hooks, or angles do you currently use in your marketing? What's your main offer hook?"
-        value={form.messaging}
-        onChange={(e) => update("messaging", e.target.value)}
-        rows={3}
-      />
-      <Textarea
-        label="Past Campaigns (What Worked / Didn't)"
-        placeholder="Any notable wins or failures? Campaigns that crushed it or flopped? What did you learn?"
-        value={form.pastCampaigns}
-        onChange={(e) => update("pastCampaigns", e.target.value)}
-        rows={3}
-      />
-      <Textarea
-        label="Funnel Structure"
-        placeholder="e.g. Ad → Landing Page → VSL → Book a Call → Discovery Call → Proposal → Close"
-        value={form.funnelStructure}
-        onChange={(e) => update("funnelStructure", e.target.value)}
-        rows={2}
-      />
+      <Textarea label="Current Messaging & Angles Used" placeholder="What headlines, hooks, or angles do you currently use? What's your main offer hook?" value={form.messaging} onChange={(e) => update("messaging", e.target.value)} rows={3} />
+      <Textarea label="Past Campaigns (What Worked / Didn't)" placeholder="Any notable wins or failures? What did you learn?" value={form.pastCampaigns} onChange={(e) => update("pastCampaigns", e.target.value)} rows={3} />
+      <Textarea label="Funnel Structure" placeholder="e.g. Ad → Landing Page → VSL → Book a Call → Discovery → Close" value={form.funnelStructure} onChange={(e) => update("funnelStructure", e.target.value)} rows={2} />
       <div className="grid grid-cols-2 gap-4">
         <Input label="Current Monthly Leads" placeholder="~50 leads/month" value={form.monthlyLeads} onChange={(e) => update("monthlyLeads", e.target.value)} helpText="Approximate is fine" />
         <Input label="Current Close Rate" placeholder="~20%" value={form.closeRate} onChange={(e) => update("closeRate", e.target.value)} helpText="Approximate is fine" />

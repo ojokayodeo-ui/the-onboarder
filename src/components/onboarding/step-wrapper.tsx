@@ -20,12 +20,12 @@ export function StepWrapper({ title, description, emoji, children, onNext, onSav
       {/* Step header */}
       <div className="mb-8">
         <div className="text-4xl mb-4">{emoji}</div>
-        <h2 className="text-2xl font-bold text-slate-900 mb-2">{title}</h2>
-        <p className="text-slate-500 leading-relaxed">{description}</p>
+        <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-2">{title}</h2>
+        <p className="text-slate-500 dark:text-slate-400 leading-relaxed">{description}</p>
       </div>
 
       {/* Fields */}
-      <div className="bg-white rounded-2xl border border-slate-200 p-6 mb-6 shadow-sm">
+      <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 p-6 mb-6 shadow-sm dark:shadow-none">
         <div className="space-y-6">{children}</div>
       </div>
 
@@ -35,7 +35,7 @@ export function StepWrapper({ title, description, emoji, children, onNext, onSav
           type="button"
           onClick={onSave}
           disabled={saving}
-          className="flex items-center gap-1.5 text-sm text-slate-500 hover:text-slate-700 transition-colors"
+          className="flex items-center gap-1.5 text-sm text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors disabled:opacity-50"
         >
           <Save size={14} />
           Save & continue later

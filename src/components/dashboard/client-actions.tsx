@@ -16,10 +16,7 @@ interface ClientActionsProps {
 
 const STAGES = ["NEW_CLIENT", "ONBOARDING", "STRATEGY", "EXECUTION"] as const;
 const STAGE_LABELS: Record<string, string> = {
-  NEW_CLIENT: "New Client",
-  ONBOARDING: "Onboarding",
-  STRATEGY: "Strategy",
-  EXECUTION: "Execution",
+  NEW_CLIENT: "New Client", ONBOARDING: "Onboarding", STRATEGY: "Strategy", EXECUTION: "Execution",
 };
 
 export function ClientActions({ clientId, status, pipelineStage, onboardingToken }: ClientActionsProps) {
@@ -78,19 +75,19 @@ export function ClientActions({ clientId, status, pipelineStage, onboardingToken
   return (
     <>
       <div className="flex items-center gap-2">
-        {/* Pipeline stage */}
+        {/* Pipeline stage dropdown */}
         <div className="relative group">
-          <button className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-slate-700 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors">
+          <button className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors bg-white dark:bg-transparent">
             <span className="w-2 h-2 bg-brand-500 rounded-full" />
             {STAGE_LABELS[currentStage]}
             <ChevronDown size={14} />
           </button>
-          <div className="absolute right-0 top-full mt-1 bg-white border border-slate-200 rounded-xl shadow-lg z-10 py-1 w-40 hidden group-hover:block">
+          <div className="absolute right-0 top-full mt-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl shadow-lg dark:shadow-slate-900/50 z-10 py-1 w-40 hidden group-hover:block">
             {STAGES.map((stage) => (
               <button
                 key={stage}
                 onClick={() => updateStage(stage)}
-                className={`w-full text-left px-4 py-2 text-sm hover:bg-slate-50 transition-colors ${currentStage === stage ? "text-brand-600 font-medium" : "text-slate-700"}`}
+                className={`w-full text-left px-4 py-2 text-sm hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors ${currentStage === stage ? "text-brand-600 dark:text-brand-400 font-medium" : "text-slate-700 dark:text-slate-300"}`}
               >
                 {STAGE_LABELS[stage]}
               </button>
@@ -98,9 +95,7 @@ export function ClientActions({ clientId, status, pipelineStage, onboardingToken
           </div>
         </div>
 
-        <Button variant="outline" size="sm" onClick={getLink}>
-          Get Link
-        </Button>
+        <Button variant="outline" size="sm" onClick={getLink}>Get Link</Button>
 
         <Button size="sm" onClick={runAIAnalysis} loading={analyzing}>
           <Brain size={14} />
@@ -108,15 +103,14 @@ export function ClientActions({ clientId, status, pipelineStage, onboardingToken
         </Button>
       </div>
 
-      {/* Onboarding link modal */}
       <Modal open={!!linkModal} onClose={() => setLinkModal(null)} title="Onboarding Link">
         {linkModal && (
           <div className="space-y-4">
-            <p className="text-sm text-slate-600">Share this link with your client:</p>
-            <div className="flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-lg p-3">
-              <code className="flex-1 text-xs text-slate-700 truncate">{linkModal}</code>
-              <button onClick={() => copyLink(linkModal)} className="flex-shrink-0 p-1.5 hover:bg-slate-200 rounded-md transition-colors">
-                {copied ? <Check size={14} className="text-emerald-600" /> : <Copy size={14} className="text-slate-500" />}
+            <p className="text-sm text-slate-600 dark:text-slate-300">Share this link with your client:</p>
+            <div className="flex items-center gap-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-3">
+              <code className="flex-1 text-xs text-slate-700 dark:text-slate-300 truncate">{linkModal}</code>
+              <button onClick={() => copyLink(linkModal)} className="flex-shrink-0 p-1.5 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-md transition-colors">
+                {copied ? <Check size={14} className="text-emerald-600" /> : <Copy size={14} className="text-slate-500 dark:text-slate-400" />}
               </button>
             </div>
             <Button className="w-full" onClick={() => copyLink(linkModal)}>

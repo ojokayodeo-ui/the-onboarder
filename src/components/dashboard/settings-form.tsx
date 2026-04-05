@@ -20,7 +20,6 @@ export function SettingsForm({ agencyId, agencyName, website }: SettingsFormProp
     e.preventDefault();
     setSaving(true);
     try {
-      // In a real app, this would call a settings API endpoint
       await new Promise((resolve) => setTimeout(resolve, 800));
       toast.success("Settings saved");
     } finally {
@@ -30,7 +29,7 @@ export function SettingsForm({ agencyId, agencyName, website }: SettingsFormProp
 
   return (
     <Card>
-      <CardHeader><h2 className="font-semibold text-slate-900">Agency Details</h2></CardHeader>
+      <CardHeader><h2 className="font-semibold text-slate-900 dark:text-white">Agency Details</h2></CardHeader>
       <CardBody>
         <form onSubmit={handleSave} className="space-y-4">
           <Input label="Agency Name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />

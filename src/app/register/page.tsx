@@ -41,7 +41,7 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="min-h-screen flex">
+    <div className="min-h-screen flex bg-white dark:bg-slate-950">
       {/* Left panel */}
       <div className="hidden lg:flex w-1/2 bg-gradient-to-br from-brand-950 via-brand-900 to-slate-900 p-12 flex-col justify-between">
         <div className="flex items-center gap-2.5">
@@ -71,32 +71,31 @@ export default function RegisterPage() {
       </div>
 
       {/* Right panel */}
-      <div className="flex-1 flex items-center justify-center p-6">
+      <div className="flex-1 flex items-center justify-center p-6 bg-white dark:bg-slate-950">
         <div className="w-full max-w-md">
           <div className="lg:hidden flex items-center gap-2.5 mb-8">
             <div className="w-8 h-8 bg-brand-600 rounded-lg flex items-center justify-center">
               <Zap size={16} className="text-white" />
             </div>
-            <span className="font-bold text-slate-900">Onboarding OS</span>
+            <span className="font-bold text-slate-900 dark:text-white">Onboarding OS</span>
           </div>
 
-          <h1 className="text-2xl font-bold text-slate-900 mb-1.5">Create your agency account</h1>
-          <p className="text-slate-500 mb-8">Set up in 30 seconds. No credit card needed.</p>
+          <h1 className="text-2xl font-bold text-slate-900 dark:text-white mb-1.5">Create your agency account</h1>
+          <p className="text-slate-500 dark:text-slate-400 mb-8">Set up in 30 seconds. No credit card needed.</p>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <Input label="Your name" placeholder="Alex Johnson" value={form.name} onChange={(e) => update("name", e.target.value)} required />
             <Input label="Agency name" placeholder="Acme Marketing Agency" value={form.agencyName} onChange={(e) => update("agencyName", e.target.value)} required />
             <Input label="Work email" type="email" placeholder="you@agency.com" value={form.email} onChange={(e) => update("email", e.target.value)} required />
             <Input label="Password" type="password" placeholder="Min 8 characters" value={form.password} onChange={(e) => update("password", e.target.value)} required minLength={8} />
-
             <Button type="submit" className="w-full mt-2" size="lg" loading={loading}>
               Create free account
             </Button>
           </form>
 
-          <p className="text-center text-sm text-slate-500 mt-6">
+          <p className="text-center text-sm text-slate-500 dark:text-slate-400 mt-6">
             Already have an account?{" "}
-            <Link href="/login" className="text-brand-600 font-medium hover:underline">
+            <Link href="/login" className="text-brand-600 dark:text-brand-400 font-medium hover:underline">
               Sign in
             </Link>
           </p>
