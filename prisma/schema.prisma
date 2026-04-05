@@ -1,0 +1,176 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ─────────────────────────────────────────────
+// AUTH & USERS
+// ─────────────────────────────────────────────
+// role: SUPER_ADMIN | AGENCY_ADMIN | AGENCY_MEMBER | CLIENT
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  password  String?
+  image     String?
+  role      String   @default("AGENCY_ADMIN")
+  agencyId  String?
+  agency    Agency?  @relation(fields: [agencyId], references: [id])
+  notes     Note[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([agencyId])
+}
+
+// ─────────────────────────────────────────────
+// AGENCY (TENANT)
+// ─────────────────────────────────────────────
+
+model Agency {
+  id           String           @id @default(cuid())
+  name         String
+  slug         String           @unique
+  logo         String?
+  website      String?
+  primaryColor String?          @default("#6366f1")
+  users        User[]
+  clients      Client[]
+  forms        OnboardingForm[]
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+}
+
+// ─────────────────────────────────────────────
+// CLIENTS
+// ─────────────────────────────────────────────
+// status: NEW | INVITED | ONBOARDING_STARTED | ONBOARDING_IN_PROGRESS | ONBOARDING_COMPLETED | ACTIVE | PAUSED | CHURNED
+// pipelineStage: NEW_CLIENT | ONBOARDING | STRATEGY | EXECUTION
+
+model Client {
+  id              String               @id @default(cuid())
+  agencyId        String
+  agency          Agency               @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+  name            String
+  email           String
+  company         String?
+  phone           String?
+  avatarUrl       String?
+  status          String               @default("NEW")
+  pipelineStage   String               @default("NEW_CLIENT")
+  onboardingToken String               @unique @default(uuid())
+  tokenExpiry     DateTime?
+  invitedAt       DateTime?
+  completedAt     DateTime?
+  formId          String?
+  responses       OnboardingResponse[]
+  assets          Asset[]
+  aiAnalysis      AIAnalysis?
+  notes           Note[]
+  createdAt       DateTime             @default(now())
+  updatedAt       DateTime             @updatedAt
+
+  @@index([agencyId])
+  @@index([onboardingToken])
+  @@index([status])
+}
+
+// ─────────────────────────────────────────────
+// ONBOARDING FORMS
+// ─────────────────────────────────────────────
+
+model OnboardingForm {
+  id          String   @id @default(cuid())
+  agencyId    String
+  agency      Agency   @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+  name        String
+  description String?
+  sections    String   // JSON: Array of sections with questions
+  isDefault   Boolean  @default(false)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([agencyId])
+}
+
+// ─────────────────────────────────────────────
+// ONBOARDING RESPONSES
+// ─────────────────────────────────────────────
+
+model OnboardingResponse {
+  id          String    @id @default(cuid())
+  clientId    String
+  client      Client    @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  section     String    // business | offer | audience | competition | marketing | goals | assets
+  data        String    // JSON
+  isComplete  Boolean   @default(false)
+  completedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@unique([clientId, section])
+  @@index([clientId])
+}
+
+// ─────────────────────────────────────────────
+// ASSETS
+// ─────────────────────────────────────────────
+// type: FILE | LINK
+
+model Asset {
+  id        String   @id @default(cuid())
+  clientId  String
+  client    Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  type      String   @default("LINK")
+  name      String
+  url       String
+  size      Int?
+  mimeType  String?
+  createdAt DateTime @default(now())
+
+  @@index([clientId])
+}
+
+// ─────────────────────────────────────────────
+// AI ANALYSIS
+// ─────────────────────────────────────────────
+
+model AIAnalysis {
+  id                 String   @id @default(cuid())
+  clientId           String   @unique
+  client             Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  snapshot           String?  // JSON
+  icpProfile         String?  // JSON
+  offerBreakdown     String?  // JSON
+  competitorOverview String?  // JSON
+  marketingAnalysis  String?  // JSON
+  readinessScore     Int?
+  readinessMissing   String?  // JSON: Array of missing items
+  actionPlan         String?  // JSON
+  inconsistencies    String?  // JSON
+  rawResponse        String?
+  processedAt        DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+}
+
+// ─────────────────────────────────────────────
+// NOTES
+// ─────────────────────────────────────────────
+
+model Note {
+  id        String   @id @default(cuid())
+  clientId  String
+  client    Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  content   String
+  authorId  String
+  author    User     @relation(fields: [authorId], references: [id])
+  createdAt DateTime @default(now())
+
+  @@index([clientId])
+}
