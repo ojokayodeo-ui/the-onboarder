@@ -6,8 +6,6 @@ const nextConfig = {
   experimental: {
     serverComponentsExternalPackages: ["@prisma/client", "bcryptjs"],
   },
-  // Produces a self-contained .next/standalone bundle — ideal for Railway containers
-  output: "standalone",
 };
 
 export default nextConfig;
