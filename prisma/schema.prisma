@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -90,7 +90,7 @@ model OnboardingForm {
   agency      Agency   @relation(fields: [agencyId], references: [id], onDelete: Cascade)
   name        String
   description String?
-  sections    String   // JSON: Array of sections with questions
+  sections    String   // JSON
   isDefault   Boolean  @default(false)
   isActive    Boolean  @default(true)
   createdAt   DateTime @default(now())
@@ -121,7 +121,6 @@ model OnboardingResponse {
 // ─────────────────────────────────────────────
 // ASSETS
 // ─────────────────────────────────────────────
-// type: FILE | LINK
 
 model Asset {
   id        String   @id @default(cuid())
@@ -151,7 +150,7 @@ model AIAnalysis {
   competitorOverview String?  // JSON
   marketingAnalysis  String?  // JSON
   readinessScore     Int?
-  readinessMissing   String?  // JSON: Array of missing items
+  readinessMissing   String?  // JSON
   actionPlan         String?  // JSON
   inconsistencies    String?  // JSON
   rawResponse        String?

@@ -1,0 +1,15 @@
+[phases.setup]
+nixPkgs = ["nodejs_20", "openssl"]
+
+[phases.install]
+cmds = ["npm ci --legacy-peer-deps"]
+
+[phases.build]
+cmds = [
+  "npx prisma generate",
+  "npx prisma migrate deploy",
+  "npx next build"
+]
+
+[start]
+cmd = "node .next/standalone/server.js"
