@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { RefreshCw, CheckCircle2, AlertCircle, Users, Zap, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardHeader, CardBody } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 
@@ -74,7 +74,7 @@ export default function IntegrationsPage() {
                 <Zap size={20} className="text-brand-600 dark:text-brand-400" />
               </div>
               <div>
-                <CardTitle className="text-base">Pipeline Activation — Salesflow</CardTitle>
+                <p className="font-semibold text-slate-900 dark:text-white">Pipeline Activation — Salesflow</p>
                 <p className="text-sm text-slate-500 dark:text-slate-400">Sync won clients → auto-invite to onboarding</p>
               </div>
             </div>
@@ -83,7 +83,7 @@ export default function IntegrationsPage() {
             </Badge>
           </div>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardBody className="space-y-4">
           {/* How it works */}
           <div className="bg-slate-50 dark:bg-slate-800/50 rounded-xl p-4">
             <p className="text-xs font-medium text-slate-500 dark:text-slate-400 mb-3">HOW IT WORKS</p>
@@ -155,7 +155,7 @@ export default function IntegrationsPage() {
           <p className="text-xs text-slate-400 dark:text-slate-500">
             Sync is safe to run multiple times — existing clients are never duplicated. New clients receive an onboarding invite email automatically.
           </p>
-        </CardContent>
+        </CardBody>
       </Card>
 
       {/* Clients synced */}
