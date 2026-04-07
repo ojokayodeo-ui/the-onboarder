@@ -226,13 +226,15 @@ model Task {
 // type: ONBOARDING_INVITE | REMINDER | WELCOME | TASK_REMINDER
 
 model EmailLog {
-  id        String   @id @default(cuid())
-  clientId  String
-  client    Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
-  type      String
-  subject   String
-  status    String   @default("SENT")
-  sentAt    DateTime @default(now())
+  id           String   @id @default(cuid())
+  clientId     String
+  client       Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  type         String
+  sequenceStep String?
+  subject      String
+  status       String   @default("SENT")
+  sentAt       DateTime @default(now())
 
   @@index([clientId])
+  @@index([sequenceStep])
 }
