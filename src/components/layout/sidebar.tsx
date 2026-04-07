@@ -7,7 +7,7 @@ import { useTheme } from "next-themes";
 import {
   LayoutDashboard, Users, GitBranch, Settings,
   LogOut, Zap, ChevronRight, Sun, Moon, Monitor,
-  CheckSquare, Link2
+  CheckSquare, Link2, BarChart2
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Avatar } from "@/components/ui/avatar";
@@ -18,6 +18,7 @@ const navItems = [
   { href: "/clients", label: "Clients", icon: Users },
   { href: "/pipeline", label: "Pipeline", icon: GitBranch },
   { href: "/tasks", label: "Tasks", icon: CheckSquare },
+  { href: "/analytics", label: "Analytics", icon: BarChart2 },
   { href: "/integrations", label: "Integrations", icon: Link2 },
   { href: "/settings", label: "Settings", icon: Settings },
 ];

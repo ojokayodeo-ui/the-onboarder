@@ -74,6 +74,7 @@ model Client {
   aiAnalysis      AIAnalysis?
   notes           Note[]
   tasks           Task[]
+  messages        Message[]
   emailLogs       EmailLog[]
   createdAt       DateTime             @default(now())
   updatedAt       DateTime             @updatedAt
@@ -175,6 +176,25 @@ model Note {
   createdAt DateTime @default(now())
 
   @@index([clientId])
+}
+
+// ─────────────────────────────────────────────
+// MESSAGES
+// ─────────────────────────────────────────────
+// direction: OUTBOUND | INBOUND
+
+model Message {
+  id         String   @id @default(cuid())
+  clientId   String
+  client     Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  direction  String   @default("OUTBOUND")
+  subject    String
+  body       String
+  aiAssisted Boolean  @default(false)
+  sentAt     DateTime @default(now())
+
+  @@index([clientId])
+  @@index([direction])
 }
 
 // ─────────────────────────────────────────────

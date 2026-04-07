@@ -10,6 +10,7 @@ import { Progress } from "@/components/ui/progress";
 import { ClientActions } from "@/components/dashboard/client-actions";
 import { AIAnalysisView } from "@/components/dashboard/ai-analysis-view";
 import { ClientNotes } from "@/components/dashboard/client-notes";
+import { ClientMessages } from "@/components/dashboard/client-messages";
 import { statusLabel, statusColor, formatDate, formatDateRelative, calculateOnboardingProgress, scoreColor, scoreLabel, parseJsonField } from "@/lib/utils";
 import type { ParsedSnapshot, ParsedActionPlan } from "@/types";
 
@@ -230,6 +231,14 @@ export default async function ClientDetailPage({ params }: { params: { id: strin
           )}
 
           <ClientNotes clientId={client.id} initialNotes={client.notes.map(n => ({ ...n, createdAt: n.createdAt.toISOString() }))} />
+
+          {/* Messages */}
+          <Card>
+            <CardHeader><h3 className="font-semibold text-slate-900 dark:text-white text-sm">Messages</h3></CardHeader>
+            <CardBody>
+              <ClientMessages clientId={client.id} />
+            </CardBody>
+          </Card>
         </div>
       </div>
     </div>
