@@ -1,0 +1,1 @@
+ALTER TABLE "Agency" ADD COLUMN "autoWelcomeEmail" BOOLEAN NOT NULL DEFAULT false;

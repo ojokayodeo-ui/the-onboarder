@@ -69,18 +69,35 @@ export async function analyzeOnboardingData(data: OnboardingData): Promise<AIAna
   const content = message.content[0];
   if (content.type !== "text") throw new Error("Unexpected response type");
 
-  // Extract JSON from response
-  const jsonMatch = content.text.match(/```json\n([\s\S]*?)\n```/);
-  if (!jsonMatch) {
-    // Try to parse the entire response as JSON
+  const text = content.text;
+
+  // Try ```json ... ``` block first
+  const fencedMatch = text.match(/```(?:json)?\s*([\s\S]*?)```/);
+  if (fencedMatch) {
     try {
-      return JSON.parse(content.text) as AIAnalysisResult;
+      return JSON.parse(fencedMatch[1].trim()) as AIAnalysisResult;
     } catch {
-      throw new Error("Failed to parse AI response as JSON");
+      // fall through
     }
   }
 
-  return JSON.parse(jsonMatch[1]) as AIAnalysisResult;
+  // Try to extract the first { ... } JSON object from the text
+  const firstBrace = text.indexOf("{");
+  const lastBrace = text.lastIndexOf("}");
+  if (firstBrace !== -1 && lastBrace !== -1 && lastBrace > firstBrace) {
+    try {
+      return JSON.parse(text.slice(firstBrace, lastBrace + 1)) as AIAnalysisResult;
+    } catch {
+      // fall through
+    }
+  }
+
+  // Last resort: try the whole response
+  try {
+    return JSON.parse(text.trim()) as AIAnalysisResult;
+  } catch {
+    throw new Error("Failed to parse AI response as JSON");
+  }
 }
 
 function buildAnalysisPrompt(data: OnboardingData): string {

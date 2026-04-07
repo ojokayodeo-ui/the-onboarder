@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { z } from "zod";
+import { sendSequenceStep } from "@/lib/send-sequence";
 
 const sections = ["business", "offer", "audience", "competition", "marketing", "goals", "assets"] as const;
 
@@ -78,6 +79,7 @@ export async function POST(req: NextRequest, { params }: { params: { token: stri
       newStatus = "ONBOARDING_COMPLETED";
     }
 
+    const wasAlreadyComplete = client.status === "ONBOARDING_COMPLETED";
     await prisma.client.update({
       where: { id: client.id },
       data: {
@@ -85,6 +87,20 @@ export async function POST(req: NextRequest, { params }: { params: { token: stri
         ...(newStatus === "ONBOARDING_COMPLETED" && { completedAt: new Date() }),
       },
     });
+
+    // Auto-send welcome email on completion if agency setting is on
+    if (newStatus === "ONBOARDING_COMPLETED" && !wasAlreadyComplete) {
+      try {
+        const agency = await prisma.agency.findUnique({ where: { id: client.agencyId } });
+        if (agency?.autoWelcomeEmail) {
+          const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? process.env.NEXTAUTH_URL ?? "";
+          // Fire-and-forget (don't block the response)
+          sendSequenceStep(client.id, "onboarding_complete", agency.name, appUrl).catch(console.error);
+        }
+      } catch (e) {
+        console.error("Auto welcome email failed:", e);
+      }
+    }
 
     return NextResponse.json({
       success: true,

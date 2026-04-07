@@ -33,17 +33,18 @@ model User {
 // ─────────────────────────────────────────────
 
 model Agency {
-  id           String           @id @default(cuid())
-  name         String
-  slug         String           @unique
-  logo         String?
-  website      String?
-  primaryColor String?          @default("#6366f1")
-  users        User[]
-  clients      Client[]
-  forms        OnboardingForm[]
-  createdAt    DateTime         @default(now())
-  updatedAt    DateTime         @updatedAt
+  id                String           @id @default(cuid())
+  name              String
+  slug              String           @unique
+  logo              String?
+  website           String?
+  primaryColor      String?          @default("#2563eb")
+  autoWelcomeEmail  Boolean          @default(false)
+  users             User[]
+  clients           Client[]
+  forms             OnboardingForm[]
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
 }
 
 // ─────────────────────────────────────────────

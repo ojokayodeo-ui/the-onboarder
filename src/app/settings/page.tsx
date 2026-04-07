@@ -3,6 +3,7 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { Card, CardHeader, CardBody } from "@/components/ui/card";
 import { SettingsForm } from "@/components/dashboard/settings-form";
+import { AutomationSettings } from "@/components/dashboard/automation-settings";
 
 export default async function SettingsPage() {
   const session = await getServerSession(authOptions);
@@ -20,6 +21,8 @@ export default async function SettingsPage() {
 
       <div className="max-w-2xl space-y-6">
         <SettingsForm agencyId={agency?.id ?? ""} agencyName={agency?.name ?? ""} website={agency?.website ?? ""} />
+
+        <AutomationSettings autoWelcomeEmail={agency?.autoWelcomeEmail ?? false} />
 
         <Card>
           <CardHeader><h2 className="font-semibold text-slate-900 dark:text-white">Account</h2></CardHeader>
