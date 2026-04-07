@@ -35,11 +35,15 @@ export function ClientActions({ clientId, status, pipelineStage, onboardingToken
         body: JSON.stringify({ clientId }),
         signal: AbortSignal.timeout(120000), // 2 min timeout
       });
-      if (!res.ok) throw new Error("Analysis failed");
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error ?? `Server error ${res.status}`);
+      }
       toast.success("AI analysis complete!");
       window.location.reload();
-    } catch {
-      toast.error("Analysis failed. Check your API key.");
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "Unknown error";
+      toast.error(`Analysis failed: ${msg}`);
     } finally {
       setAnalyzing(false);
     }
