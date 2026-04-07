@@ -58,6 +58,7 @@ export async function analyzeOnboardingData(data: OnboardingData): Promise<AIAna
   const message = await anthropic.messages.create({
     model: "claude-opus-4-6",
     max_tokens: 4096,
+    system: "You are a JSON API. You must respond with ONLY a valid JSON object. No markdown, no code fences, no explanation, no text before or after. Just the raw JSON object.",
     messages: [
       {
         role: "user",
@@ -69,9 +70,16 @@ export async function analyzeOnboardingData(data: OnboardingData): Promise<AIAna
   const content = message.content[0];
   if (content.type !== "text") throw new Error("Unexpected response type");
 
-  const text = content.text;
+  const text = content.text.trim();
 
-  // Try ```json ... ``` block first
+  // Try direct parse first (since we asked for raw JSON)
+  try {
+    return JSON.parse(text) as AIAnalysisResult;
+  } catch {
+    // fall through
+  }
+
+  // Try to extract from fenced block (in case model ignored instructions)
   const fencedMatch = text.match(/```(?:json)?\s*([\s\S]*?)```/);
   if (fencedMatch) {
     try {
@@ -81,7 +89,7 @@ export async function analyzeOnboardingData(data: OnboardingData): Promise<AIAna
     }
   }
 
-  // Try to extract the first { ... } JSON object from the text
+  // Try to extract the first { ... } JSON object
   const firstBrace = text.indexOf("{");
   const lastBrace = text.lastIndexOf("}");
   if (firstBrace !== -1 && lastBrace !== -1 && lastBrace > firstBrace) {
@@ -92,91 +100,25 @@ export async function analyzeOnboardingData(data: OnboardingData): Promise<AIAna
     }
   }
 
-  // Last resort: try the whole response
-  try {
-    return JSON.parse(text.trim()) as AIAnalysisResult;
-  } catch {
-    throw new Error("Failed to parse AI response as JSON");
-  }
+  // Log raw for debugging then throw
+  console.error("AI raw response (unparseable):", text.slice(0, 500));
+  throw new Error(`Failed to parse AI response. Raw: ${text.slice(0, 200)}`);
 }
 
 function buildAnalysisPrompt(data: OnboardingData): string {
-  return `You are a senior marketing strategist and business analyst. Analyze the following client onboarding data and produce a comprehensive, actionable analysis.
+  return `Analyze the following client onboarding data as a senior marketing strategist. Return a JSON object with exactly these keys:
 
 CLIENT: ${data.clientName} at ${data.company}
 
 ONBOARDING DATA:
 ${JSON.stringify(data, null, 2)}
 
-Produce a thorough analysis in the following JSON format. Be specific, actionable, and honest about weaknesses.
-
-\`\`\`json
-{
-  "snapshot": {
-    "summary": "2-3 sentence executive summary of the business and their current situation",
-    "keyInsights": ["insight 1", "insight 2", "insight 3", "insight 4", "insight 5"]
-  },
-  "icpProfile": {
-    "icp": {
-      "title": "Job title of ideal buyer",
-      "companySize": "Company size range",
-      "industry": "Target industry",
-      "revenue": "Revenue range",
-      "geography": "Geographic focus",
-      "technographics": ["tool1", "tool2"],
-      "psychographics": ["trait1", "trait2"]
-    },
-    "personas": [
-      {
-        "name": "Persona nickname",
-        "title": "Job title",
-        "age": "Age range",
-        "goals": "Primary professional goal",
-        "painPoints": ["pain1", "pain2", "pain3"],
-        "triggers": "What triggers them to seek a solution",
-        "objections": ["objection1", "objection2"],
-        "messagingAngle": "Best angle to reach this persona"
-      }
-    ]
-  },
-  "offerBreakdown": {
-    "strength": 75,
-    "strengths": ["strength 1", "strength 2"],
-    "weaknesses": ["weakness 1", "weakness 2"],
-    "suggestions": ["suggestion 1", "suggestion 2", "suggestion 3"]
-  },
-  "competitorOverview": {
-    "competitors": [
-      {"name": "Competitor name", "notes": "Brief competitive notes"}
-    ],
-    "positioning": "Assessment of their current market positioning",
-    "opportunities": ["opportunity 1", "opportunity 2"]
-  },
-  "marketingAnalysis": {
-    "currentChannels": ["channel1", "channel2"],
-    "messagingStrength": "Assessment of their current messaging",
-    "gaps": ["gap1", "gap2"],
-    "recommendations": ["recommendation 1", "recommendation 2", "recommendation 3"]
-  },
-  "readinessScore": 70,
-  "readinessMissing": ["missing item 1", "missing item 2"],
-  "actionPlan": [
-    {
-      "priority": 1,
-      "action": "Specific action to take",
-      "category": "Content | Research | Analytics | Outreach | Strategy",
-      "timeframe": "Week 1 | Week 2-3 | Month 1 | Month 2-3"
-    }
-  ],
-  "inconsistencies": ["inconsistency 1 if any"]
-}
-\`\`\`
+Return this exact JSON structure (replace placeholder values with real analysis):
+{"snapshot":{"summary":"2-3 sentence executive summary","keyInsights":["insight1","insight2","insight3","insight4","insight5"]},"icpProfile":{"icp":{"title":"Job title of ideal buyer","companySize":"size range","industry":"target industry","revenue":"revenue range","geography":"geographic focus","technographics":["tool1"],"psychographics":["trait1"]},"personas":[{"name":"nickname","title":"job title","age":"age range","goals":"primary goal","painPoints":["pain1","pain2"],"triggers":"what triggers them","objections":["objection1"],"messagingAngle":"best angle"}]},"offerBreakdown":{"strength":75,"strengths":["strength1"],"weaknesses":["weakness1"],"suggestions":["suggestion1"]},"competitorOverview":{"competitors":[{"name":"competitor","notes":"notes"}],"positioning":"positioning assessment","opportunities":["opportunity1"]},"marketingAnalysis":{"currentChannels":["channel1"],"messagingStrength":"assessment","gaps":["gap1"],"recommendations":["rec1"]},"readinessScore":70,"readinessMissing":["missing1"],"actionPlan":[{"priority":1,"action":"action","category":"Strategy","timeframe":"Week 1"}],"inconsistencies":["none"]}
 
 Rules:
-- readinessScore: 0-100 based on completeness and quality of data provided
-- offerBreakdown.strength: 0-100 based on offer clarity, differentiation, and market fit
-- Be specific and reference actual data from the onboarding responses
-- If data is missing for a section, note it in readinessMissing and adjust score accordingly
-- Action plan should be ordered by priority and immediately actionable
-- Inconsistencies should flag any contradictions or misalignments in the data`;
+- readinessScore: 0-100 integer
+- offerBreakdown.strength: 0-100 integer
+- Be specific, reference actual data from the onboarding responses
+- actionPlan ordered by priority, immediately actionable`;
 }
