@@ -33,10 +33,11 @@ export function ClientActions({ clientId, status, pipelineStage, onboardingToken
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ clientId }),
+        signal: AbortSignal.timeout(120000), // 2 min timeout
       });
       if (!res.ok) throw new Error("Analysis failed");
       toast.success("AI analysis complete!");
-      router.refresh();
+      window.location.reload();
     } catch {
       toast.error("Analysis failed. Check your API key.");
     } finally {
